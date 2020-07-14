@@ -2,38 +2,47 @@
 
 # clase Gilded Rose
 class GildedRose
-
+  
   def initialize(items)
     @items = items
-    @goods = { :aged => 'Aged Brie',
-                  :backstage => 'Backstage passes to a TAFKAL80ETC concert',
-                  :sulfuras => 'Sulfuras, Hand of Ragnaros' }
+    @goods = {  aged: 'Aged Brie',
+                backstage: 'Backstage passes to a TAFKAL80ETC concert',
+                sulfuras: 'Sulfuras, Hand of Ragnaros' }
   end
 
+  
   def update_sell_in(item)
-    return unless item.name != @goods[:sulfuras]
+    name = item.name
+    return unless name != @goods[:sulfuras]
 
-    item.sell_in = item.sell_in - 1
+    item.sell_in -= 1
   end
 
   def outlier_sell_in(item)
+    quality = item.quality
     return unless item.sell_in.negative?
 
-    item.name != @goods[:aged] ? detect_backstage(item) : item.quality += 1 if item.quality < 50
+    if item.name != @goods[:aged]
+      detect_backstage(item)
+    elsif quality < 50
+      item.quality += 1
+    end
   end
 
   def detect_backstage(item)
-    item.name != @goods[:backstage] ? decrease_quality(item) : item.quality -= item.quality
+    item.name != @goods[:backstage] ? item.decrease_quality : item.quality -= item.quality
   end
 
   def decrease_quality(item)
-    return unless item.quality.positive? && item.name != @goods[:sulfuras]
+    quality = item.quality
+    return unless quality.positive? && item.name != @goods[:sulfuras]
 
     item.quality -= 1
   end
 
   def define_quality(item)
-    if item.name != @goods[:aged] && item.name != @goods[:backstage]
+    name = item.name
+    if name != @goods[:aged] && name != @goods[:backstage]
       decrease_quality(item)
     else
       increase_quality(item)
@@ -46,8 +55,9 @@ class GildedRose
     item.quality += 1
     return unless item.name == @goods[:backstage]
 
-    increase_backstage(item) if item.sell_in < 11
-    increase_backstage(item) if item.sell_in < 6
+    sell_in = item.sell_in
+    increase_backstage(item) if sell_in < 11
+    increase_backstage(item) if sell_in < 6
   end
 
   def increase_backstage(item)
@@ -64,6 +74,8 @@ class GildedRose
     end
   end
 end
+
+
 # Clase Items, no modificar
 class Item
   attr_accessor :name, :sell_in, :quality
@@ -74,7 +86,17 @@ class Item
     @quality = quality
   end
 
-  def to_s()
+  def to_s
     "#{@name}, #{@sell_in}, #{@quality}"
   end
 end
+
+module ItemDecorator 
+  def decrease_quality
+    return unless @quality.positive? && @name != 'Sulfuras, Hand of Ragnaros'
+
+    @quality -= 1
+  end
+end
+
+Item.prepend ItemDecorator
