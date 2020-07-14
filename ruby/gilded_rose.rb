@@ -16,49 +16,51 @@ class GildedRose
     item.sell_in = item.sell_in - 1
   end
 
-  def negative_sell_in(item)
-    if item.sell_in.negative?
-      item.name != @goods[:aged] ? detect_backstage(item) : item.quality += 1 if item.quality < 50
-    end
+  def outlier_sell_in(item)
+    return unless item.sell_in.negative?
+
+    item.name != @goods[:aged] ? detect_backstage(item) : item.quality += 1 if item.quality < 50
   end
 
   def detect_backstage(item)
-    item.name != @goods[:backstage] ? detect_sulfuras(item) : item.quality = item.quality - item.quality
+    item.name != @goods[:backstage] ? decrease_quality(item) : item.quality -= item.quality
   end
 
-  def detect_sulfuras(item)
-    if item.quality.positive? && item.name != @goods[:sulfuras]
-      item.quality -= 1
+  def decrease_quality(item)
+    return unless item.quality.positive? && item.name != @goods[:sulfuras]
+
+    item.quality -= 1
+  end
+
+  def define_quality(item)
+    if item.name != @goods[:aged] && item.name != @goods[:backstage]
+      decrease_quality(item)
+    else
+      increase_quality(item)
     end
   end
 
-  def update_quality()
+  def increase_quality(item)
+    return unless item.quality < 50
+
+    item.quality += 1
+    return unless item.name == @goods[:backstage]
+
+    increase_backstage(item) if item.sell_in < 11
+    increase_backstage(item) if item.sell_in < 6
+  end
+
+  def increase_backstage(item)
+    return unless item.quality < 50
+
+    item.quality += 1
+  end
+
+  def init_proccess
     @items.each do |item|
-      if item.name != @goods[:aged] and item.name != @goods[:backstage]
-        if item.quality.positive?
-          if item.name != @goods[:sulfuras]
-            item.quality = item.quality - 1
-          end
-        end
-      else
-        if item.quality < 50
-          item.quality = item.quality + 1
-          if item.name == @goods[:backstage]
-            if item.sell_in < 11
-              if item.quality < 50
-                item.quality = item.quality + 1
-              end
-            end
-            if item.sell_in < 6
-              if item.quality < 50
-                item.quality = item.quality + 1
-              end
-            end
-          end
-        end
-      end
+      define_quality(item)
       update_sell_in(item)
-      negative_sell_in(item)
+      outlier_sell_in(item)
     end
   end
 end
