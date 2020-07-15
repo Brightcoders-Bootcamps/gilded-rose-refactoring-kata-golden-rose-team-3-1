@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-$goods = { aged: "Aged Brie",
-           backstage: "Backstage passes to a TAFKAL80ETC concert",
-           sulfuras: "Sulfuras, Hand of Ragnaros" }
+GOODS = { aged: 'Aged Brie',
+          backstage: 'Backstage passes to a TAFKAL80ETC concert',
+          sulfuras: 'Sulfuras, Hand of Ragnaros' }.freeze
 
 # clase Gilded Rose
 class GildedRose
@@ -37,13 +37,13 @@ end
 # Decorator of Item class
 module ItemDecorator
   def decrease_quality
-    return unless @quality.positive? && @name != $goods[:sulfuras]
+    return unless @quality.positive? && @name != GOODS[:sulfuras]
 
     @quality -= 1
   end
 
   def update_sell_in
-    return unless @name != $goods[:sulfuras]
+    return unless @name != GOODS[:sulfuras]
 
     @sell_in -= 1
   end
@@ -51,7 +51,7 @@ module ItemDecorator
   def outlier_sell_in
     return unless @sell_in.negative?
 
-    if @name != $goods[:aged]
+    if @name != GOODS[:aged]
       detect_backstage
     elsif @quality < 50
       @quality += 1
@@ -59,11 +59,11 @@ module ItemDecorator
   end
 
   def detect_backstage
-    @name != $goods[:backstage] ? decrease_quality : @quality -= @quality
+    @name != GOODS[:backstage] ? decrease_quality : @quality -= @quality
   end
 
   def define_quality
-    if @name != $goods[:aged] && @name != $goods[:backstage]
+    if @name != GOODS[:aged] && @name != GOODS[:backstage]
       decrease_quality
     else
       increase_quality
@@ -74,7 +74,7 @@ module ItemDecorator
     return unless @quality < 50
 
     @quality += 1
-    return unless @name == $goods[:backstage]
+    return unless @name == GOODS[:backstage]
 
     increase_backstage if @sell_in < 11
     increase_backstage if @sell_in < 6
