@@ -31,29 +31,20 @@ module ItemDecorator
   def backstage_item?
     @name == GOODS[:backstage]
   end
-  
+
   def conjured_item?
     @name.start_with?(GOODS[:conjured])
   end
 
-  def commom_item?
-    GOODS[retrieve_name.to_sym].nil?
+  def special_item?
+    GOODS.key?(retrieve_name)
   end
 
   def calculate_quality_value
-    if @sell_in.positive? && !commom_item?
-      increase_quality_value
-    else
-      calculate_quality_extend
-    end
-  end
+    return quality_aged_brie if aged_brie_item?
+    return quality_backstage if backstage_item?
 
-  def calculate_quality_extend
-    if aged_brie_item?
-      quality_aged_brie
-    elsif commom_item? || @sell_in.negative?
-      decrease_quality_value
-    end
+    quality_common_item
   end
 
   def retrieve_name
@@ -61,16 +52,16 @@ module ItemDecorator
   end
 
   def quality_aged_brie
-    return 2 if @sell_in.zero? || sell_in.negative?
+    return 2 if sell_in.negative?
 
     1
   end
 
-  def increase_quality_value
-    if backstage_item?
-      return 2 if @sell_in < 11 && @sell_in > 5
-      return 3 if @sell_in < 6
-    end
+  def quality_backstage
+    return @quality * -1 if @sell_in <= 0
+    return 2 if @sell_in < 11 && @sell_in > 5
+    return 3 if @sell_in < 6
+
     1
   end
 
@@ -82,8 +73,7 @@ module ItemDecorator
     end
   end
 
-  def decrease_quality_value
-    return @quality * -1 if backstage_item?
+  def quality_common_item
     return -2 if @sell_in.negative? || conjured_item?
 
     -1
