@@ -159,5 +159,52 @@ describe GildedRose do
         expect(items[0].quality).to eq 49
       end
     end
+
+    context 'When item is Conjured' do
+      it 'and quality is 50' do
+        items = [Item.new('Conjured', 21, 50)]
+        GildedRose.new(items).init_proccess
+
+        expect(items[0].name).to eq 'Conjured'
+        expect(items[0].sell_in).to eq 20
+        expect(items[0].quality).to eq 48
+      end
+
+      it 'and quality is 0' do
+        items = [Item.new('Conjured', 3, 0)]
+        GildedRose.new(items).init_proccess
+
+        expect(items[0].name).to eq 'Conjured'
+        expect(items[0].sell_in).to eq 2
+        expect(items[0].quality).to eq 0
+      end
+
+      it 'and sell_in is valid' do
+        items = [Item.new('Conjured', 5, 20)]
+        GildedRose.new(items).init_proccess
+
+        expect(items[0].name).to eq 'Conjured'
+        expect(items[0].sell_in).to eq 4
+        expect(items[0].quality).to eq 18
+      end
+
+      it 'and sell_in is cero' do
+        items = [Item.new('Conjured', 0, 2)]
+        GildedRose.new(items).init_proccess
+
+        expect(items[0].name).to eq 'Conjured'
+        expect(items[0].sell_in).to eq -1
+        expect(items[0].quality).to eq 0
+      end
+
+      it 'and sell_in is invalid' do
+        items = [Item.new('Conjured', -5, 4)]
+        GildedRose.new(items).init_proccess
+
+        expect(items[0].name).to eq 'Conjured'
+        expect(items[0].sell_in).to eq -6
+        expect(items[0].quality).to eq 2
+      end
+    end
   end
 end
