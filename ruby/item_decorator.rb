@@ -1,41 +1,11 @@
 # frozen_string_literal: true
 
+require File.join(File.dirname(__FILE__), 'item')
+
 GOODS = { aged: 'Aged Brie',
           backstage: 'Backstage passes to a TAFKAL80ETC concert',
-          sulfuras: 'Sulfuras, Hand of Ragnaros' }.freeze
-
-# clase Gilded Rose
-class GildedRose
-  def initialize(items)
-    @items = items
-  end
-
-  def update_quality(item)
-    item.update_quality
-  end
-
-  def init_proccess
-    @items.each do |item|
-      item.update_sell_in
-      update_quality(item)
-    end
-  end
-end
-
-# Clase Items, no modificar
-class Item
-  attr_accessor :name, :sell_in, :quality
-
-  def initialize(name, sell_in, quality)
-    @name = name
-    @sell_in = sell_in
-    @quality = quality
-  end
-
-  def to_s
-    "#{@name}, #{@sell_in}, #{@quality}"
-  end
-end
+          sulfuras: 'Sulfuras, Hand of Ragnaros',
+          conjured: 'Conjured' }.freeze
 
 # Decorator of Item class
 module ItemDecorator
@@ -47,7 +17,11 @@ module ItemDecorator
   end
 
   def invalid_quality?
-    @quality <= 0 || @quality > 50
+    @quality.negative? || @quality > 50
+  end
+
+  def aged_brie_item?
+    @name == GOODS[:aged]
   end
 
   def sulfuras_item?
@@ -57,13 +31,39 @@ module ItemDecorator
   def backstage_item?
     @name == GOODS[:backstage]
   end
+  
+  def conjured_item?
+    @name.start_with?(GOODS[:conjured])
+  end
+
+  def commom_item?
+    GOODS[retrieve_name.to_sym].nil?
+  end
 
   def calculate_quality_value
-    if @sell_in.positive?
+    if @sell_in.positive? && !commom_item?
       increase_quality_value
     else
+      calculate_quality_extend
+    end
+  end
+
+  def calculate_quality_extend
+    if aged_brie_item?
+      quality_aged_brie
+    elsif commom_item? || @sell_in.negative?
       decrease_quality_value
     end
+  end
+
+  def retrieve_name
+    @name.downcase.split.first
+  end
+
+  def quality_aged_brie
+    return 2 if @sell_in.zero? || sell_in.negative?
+
+    1
   end
 
   def increase_quality_value
@@ -84,8 +84,9 @@ module ItemDecorator
 
   def decrease_quality_value
     return @quality * -1 if backstage_item?
+    return -2 if @sell_in.negative? || conjured_item?
 
-    -2
+    -1
   end
 
   def update_sell_in

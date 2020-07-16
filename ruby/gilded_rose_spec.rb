@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require File.join(File.dirname(__FILE__), 'new_gilded_rose')
+require File.join(File.dirname(__FILE__), 'gilded_rose')
 
 describe GildedRose do
   describe '#init_proccess' do
