@@ -34,14 +34,18 @@ GEM
       ast (~> 2.4.1)
     path_expander (1.1.0)
     psych (3.1.0)
+    psych (3.1.0-x64-mingw32)
     public_suffix (4.0.5)
     rainbow (3.0.0)
+    rake (13.0.1)
     reek (6.0.1)
       kwalify (~> 0.7.0)
       parser (>= 2.5.0.0, < 2.8, != 2.5.1.1)
       psych (~> 3.1.0)
       rainbow (>= 2.0, < 4.0)
     regexp_parser (1.7.1)
+    repo-small-badge (0.2.7)
+      victor (~> 0.2.8)
     rexml (3.2.4)
     rspec (3.9.0)
       rspec-core (~> 3.9.0)
@@ -81,6 +85,8 @@ GEM
       simplecov (>= 0.17.0)
       tty-which (~> 0.4.0)
       virtus (~> 1.0)
+    rubycritic-small-badge (0.2.1)
+      repo-small-badge (~> 0.2.7)
     sexp_processor (4.15.0)
     simplecov (0.18.5)
       docile (~> 1.1)
@@ -89,6 +95,7 @@ GEM
     thread_safe (0.3.6)
     tty-which (0.4.2)
     unicode-display_width (1.7.0)
+    victor (0.2.8)
     virtus (1.0.5)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
@@ -100,10 +107,12 @@ PLATFORMS
   x64-mingw32
 
 DEPENDENCIES
+  rake
   reek
   rspec (~> 3.9)
   rubocop (~> 0.86.0)
   rubycritic (~> 4.5)
+  rubycritic-small-badge
 
 BUNDLED WITH
    2.1.4

@@ -1,6 +1,6 @@
 AllCops:
   Exclude:
-    - '*_spec.rb'
+    - 'ruby/*_spec.rb'
 
 Layout/EmptyLinesAroundAttributeAccessor:
   Enabled: false
@@ -29,4 +29,6 @@ Style/RedundantRegexpCharacterClass:
 Style/RedundantRegexpEscape:
   Enabled: false
 Style/SlicingWithRange:
+  Enabled: false
+Layout/EndOfLine:
   Enabled: false
